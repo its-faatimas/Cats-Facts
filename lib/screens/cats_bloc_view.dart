@@ -5,9 +5,16 @@ import 'package:cat_api/bloc/cats_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class CatBlocView extends StatefulWidget {
-  const CatBlocView({Key? key}) : super(key: key);
+   CatBlocView({Key? key}) : super(key: key);
+  final DateTime now = DateTime.now();
+  final DateFormat formatter = DateFormat('dd/mm/yyyy');
+  @override
+  void initState() {
+    final String formatted = formatter.format(now);
+  }
 
   @override
   _CatBlocViewState createState() => _CatBlocViewState();
@@ -20,7 +27,7 @@ class _CatBlocViewState extends State<CatBlocView> {
         lazy: false,
         create: (_) => CatsCubit(SampleCatsRepository()),
         child: Scaffold(
-          appBar: AppBar(title: const Text("Fav Cats")),
+          appBar: AppBar(title: const Text("Cats Facts")),
           body: Column(children: [
             Expanded(
                 child: BlocConsumer<CatsCubit, CatsState>(
@@ -63,9 +70,14 @@ class _CatBlocViewState extends State<CatBlocView> {
       itemBuilder: (context, index) {
         return Card(
             child: ListTile(
-          title: Text(state.response![index].toString()),
+          title: Row(
+            children: [
+              Expanded(child: Text(state.response![index].text.toString(), maxLines: state.response![index].text!.length.toInt(),)),
+              Expanded(child: Text(state.response![index].createdAt.toString()))
+            ],
+          ),
           subtitle: CachedNetworkImage(
-              imageUrl: state.response![index].source.toString()),
+              imageUrl: 'https://cataas.com/cat'),
         ));
       },
       itemCount: state.response!.length,

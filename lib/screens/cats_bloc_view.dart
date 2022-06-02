@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cat_api/bloc/cats_cubit.dart';
 import 'package:cat_api/bloc/cats_repository.dart';
 import 'package:cat_api/bloc/cats_state.dart';
@@ -51,18 +52,21 @@ class _CatBlocViewState extends State<CatBlocView> {
         ));
   }
 
-  FloatingActionButton floatingButton(BuildContext context) {
-    return FloatingActionButton(onPressed: () {
-      BlocProvider.of<CatsCubit>(context, listen: false).getCats();
-    });
-  }
+  // FloatingActionButton floatingButton(BuildContext context) {
+  //   return FloatingActionButton(onPressed: () {
+  //     BlocProvider.of<CatsCubit>(context, listen: false).getCats();
+  //   });
+  // }
 
   ListView dataListViewBuilder(CatsCompleted state) {
     return ListView.builder(
       itemBuilder: (context, index) {
         return Card(
-          child: Text(state.response![index].toString()),
-        );
+            child: ListTile(
+          title: Text(state.response![index].toString()),
+          subtitle: CachedNetworkImage(
+              imageUrl: state.response![index].source.toString()),
+        ));
       },
       itemCount: state.response!.length,
     );

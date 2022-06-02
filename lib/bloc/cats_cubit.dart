@@ -19,4 +19,4 @@ class CatsCubit extends Cubit<CatsState> {
       emit(CatsError(e.toString()));
     }
   }
-}
+ }

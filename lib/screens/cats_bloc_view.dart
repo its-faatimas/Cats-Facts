@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class CatBlocView extends StatefulWidget {
-   CatBlocView({Key? key}) : super(key: key);
+  CatBlocView({Key? key}) : super(key: key);
   final DateTime now = DateTime.now();
   final DateFormat formatter = DateFormat('dd/mm/yyyy');
   @override
@@ -27,6 +27,14 @@ class _CatBlocViewState extends State<CatBlocView> {
         lazy: false,
         create: (_) => CatsCubit(SampleCatsRepository()),
         child: Scaffold(
+          floatingActionButton: BlocBuilder<CatsCubit, CatsState>(
+            builder: (context, state) {
+              CatsCubit cubit = context.watch();
+              return FloatingActionButton(onPressed: () {
+                cubit.getCats();
+              });
+            },
+          ),
           appBar: AppBar(title: const Text("Cats Facts")),
           body: Column(children: [
             Expanded(
@@ -41,11 +49,9 @@ class _CatBlocViewState extends State<CatBlocView> {
             }, //listener is important - > narigi tomondan ma'lumot kelmay qolsa, bu bilan ham stateni boshqarish mumkin va errorni ekranga chiqarish mumkin
                     builder: (context, state) {
               if (state is CatsInitial) {
-                return Text("Meow");
+                return const Text("Meow");
               } else if (state is CatsLoading) {
-                return Center(
-                  child: CupertinoActivityIndicator(),
-                );
+                return const Center(child: CupertinoActivityIndicator());
               } else if (state is CatsCompleted) {
                 return dataListViewBuilder(state);
               } else {
@@ -72,12 +78,15 @@ class _CatBlocViewState extends State<CatBlocView> {
             child: ListTile(
           title: Row(
             children: [
-              Expanded(child: Text(state.response![index].text.toString(), maxLines: state.response![index].text!.length.toInt(),)),
+              Expanded(
+                  child: Text(
+                state.response![index].text.toString(),
+                maxLines: state.response![index].text!.length.toInt(),
+              )),
               Expanded(child: Text(state.response![index].createdAt.toString()))
             ],
           ),
-          subtitle: CachedNetworkImage(
-              imageUrl: 'https://cataas.com/cat'),
+          subtitle: CachedNetworkImage(imageUrl: 'https://cataas.com/cat'),
         ));
       },
       itemCount: state.response!.length,
